@@ -747,7 +747,7 @@ int pois0n_is_ready() {
 	// debug("Checking the device mode\n");
 	if (client->mode != kDfuMode) {
 		error("Device must be in DFU mode to continue\n");
-		irecv_close(&g_syringe_client);
+		irecv_close(g_syringe_client);
 		return -1;
 	}
 
@@ -787,7 +787,7 @@ int pois0n_is_compatible() {
 
 void pois0n_exit() {
 	debug("Exiting libpois0n\n");
-	irecv_close(&g_syringe_client);
+	irecv_close(g_syringe_client);
 	irecv_exit();
 }
 

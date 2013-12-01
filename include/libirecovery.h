@@ -85,6 +85,7 @@ extern "C" {
 #define BDID_IPHONE4_CDMA    6
 #define BDID_IPOD4G          8
 #define BDID_APPLETV2       10
+#define BDID_IPHONE4_REV     4
 
 #define DEVICE_UNKNOWN      -1
 #define DEVICE_IPHONE2G      0
@@ -98,13 +99,15 @@ extern "C" {
 #define DEVICE_IPHONE4_CDMA  8
 #define DEVICE_IPOD4G        9
 #define DEVICE_APPLETV2      10
+#define DEVICE_IPHONE4_REV   11
 
 enum {
 	kRecoveryMode1 = 0x1280,
 	kRecoveryMode2 = 0x1281,
 	kRecoveryMode3 = 0x1282,
 	kRecoveryMode4 = 0x1283,
-	kDfuMode = 0x1227
+	kDfuMode = 0x1227,
+	kDfuMode2 = 0x1222
 };
 
 typedef enum {
@@ -147,7 +150,7 @@ typedef int(*irecv_event_cb_t)(irecv_client_t client, const irecv_event_t* event
 struct irecv_client {
 	int debug;
 	int config;
-	int main_interface;
+	int interface;
 	int alt_interface;
 	unsigned short mode;
 	char serial[256];
@@ -211,7 +214,7 @@ LIBIRECOVERY_EXPORT const char* irecv_strerror(irecv_error_t error);
 LIBIRECOVERY_EXPORT irecv_error_t irecv_open_attempts(irecv_client_t* pclient, int attempts);
 LIBIRECOVERY_EXPORT irecv_error_t irecv_open(irecv_client_t* client);
 LIBIRECOVERY_EXPORT irecv_error_t irecv_reset(irecv_client_t client);
-LIBIRECOVERY_EXPORT irecv_error_t irecv_close(irecv_client_t* client);
+LIBIRECOVERY_EXPORT irecv_error_t irecv_close(irecv_client_t client);
 LIBIRECOVERY_EXPORT irecv_error_t irecv_receive(irecv_client_t client);
 LIBIRECOVERY_EXPORT irecv_error_t irecv_send_exploit(irecv_client_t client);
 LIBIRECOVERY_EXPORT irecv_error_t irecv_execute_script(irecv_client_t client, const char* filename);
