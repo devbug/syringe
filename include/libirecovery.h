@@ -150,7 +150,11 @@ typedef int(*irecv_event_cb_t)(irecv_client_t client, const irecv_event_t* event
 struct irecv_client {
 	int debug;
 	int config;
+#ifndef _WIN32
 	int interface;
+#else
+	int main_interface;
+#endif
 	int alt_interface;
 	unsigned short mode;
 	char serial[256];
