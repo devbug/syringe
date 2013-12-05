@@ -22,7 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#if !defined(WIN32)
+#include "common.h"
+
+#ifndef _WIN32
 #include <libusb-1.0/libusb.h>
 #ifdef __APPLE__
 #include <libusb-1.0/os/darwin_usb.h>
@@ -34,6 +36,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <setupapi.h>
+#include <tchar.h>
 #endif
 
 #include "libirecovery.h"
@@ -47,7 +50,7 @@
 static int libirecovery_debug = 0;
 //const int DeviceVersion = 320;
 
-#if !defined(WIN32)
+#ifndef _WIN32
 static libusb_context *libirecovery_context = NULL;
 #endif
 
@@ -309,14 +312,14 @@ int check_context(irecv_client_t client)
 
 void irecv_init()
 {
-#if !defined(WIN32)
+#ifndef _WIN32
 	libusb_init(&libirecovery_context);
 #endif
 }
 
 void irecv_exit()
 {
-#if !defined(WIN32)
+#ifndef _WIN32
 	if (libirecovery_context != NULL) {
 		libusb_exit(libirecovery_context);
 		libirecovery_context = NULL;
@@ -338,7 +341,7 @@ int irecv_control_transfer(irecv_client_t client,
 			   unsigned char *data,
 			   uint16_t wLength, unsigned int timeout)
 {
-#if !defined(WIN32)
+#ifndef _WIN32
 #ifndef __APPLE__
 	return libusb_control_transfer(client->handle, bmRequestType, bRequest, wValue, wIndex, data, wLength, timeout);
 #else
@@ -417,7 +420,7 @@ int irecv_bulk_transfer(irecv_client_t client,
 			int length, int *transferred, unsigned int timeout)
 {
 	int ret;
-#if !defined(WIN32)
+#ifndef _WIN32
 	ret =
 	    libusb_bulk_transfer(client->handle, endpoint, data, length,
 				 transferred, timeout);
@@ -441,7 +444,7 @@ int irecv_bulk_transfer(irecv_client_t client,
 int irecv_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc_index,
 				      unsigned char *buffer, int size)
 {
-#if !defined(WIN32)
+#ifndef _WIN32
 	return libusb_get_string_descriptor_ascii(client->handle, desc_index,
 						  buffer, size);
 #else
@@ -481,7 +484,7 @@ int irecv_get_string_descriptor_ascii(irecv_client_t client, uint8_t desc_index,
 
 irecv_error_t irecv_open(irecv_client_t * pclient)
 {
-#if !defined(WIN32)
+#ifndef _WIN32
 	int i = 0;
 	struct libusb_device *usb_device = NULL;
 	struct libusb_device **usb_device_list = NULL;
@@ -585,7 +588,7 @@ irecv_error_t irecv_set_configuration(irecv_client_t client, int configuration)
 {
 	if (check_context(client) != IRECV_E_SUCCESS)
 		return IRECV_E_NO_DEVICE;
-#if !defined(WIN32)
+#ifndef _WIN32
 	printf("Setting to configuration %d\n", configuration);
 
 	int current = 0;
@@ -607,7 +610,7 @@ irecv_error_t irecv_set_interface(irecv_client_t client, int interface,
 {
 	if (check_context(client) != IRECV_E_SUCCESS)
 		return IRECV_E_NO_DEVICE;
-#if !defined(WIN32)
+#ifndef _WIN32
 	// pod2g 2011-01-07: we may want to claim multiple interfaces
 	//libusb_release_interface(client->handle, client->interface);
 
@@ -630,7 +633,7 @@ irecv_error_t irecv_set_interface(irecv_client_t client, int interface,
 
 irecv_error_t irecv_reset(irecv_client_t client)
 {
-#if !defined(WIN32)
+#ifndef _WIN32
 	libusb_reset_device(client->handle);
 	if (check_context(client) != IRECV_E_SUCCESS)
 		return IRECV_E_NO_DEVICE;
@@ -740,7 +743,7 @@ irecv_error_t irecv_close(irecv_client_t client)
 			event.type = IRECV_DISCONNECTED;
 			client->disconnected_callback(client, &event);
 		}
-#if !defined(WIN32)
+#ifndef _WIN32
 		if (client->handle != NULL) {
 			if (client->mode != kDfuMode) {
 				libusb_release_interface(client->handle,
